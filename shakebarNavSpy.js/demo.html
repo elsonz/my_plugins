@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>shakebar-demo</title>
+    <link rel="stylesheet" href="shakebarNavSpy.css"/>
+    <style>
+        *{margin: 0; padding: 0;}
+        body{height:2000px;}
+        ul {border:1px solid #ccc; background-color: #fff; list-style: none; position: fixed; top:0; left:0; right:0;}
+        ul:after{content:""; display: block; clear:both;}
+        ul li {float: left; width:32px; height:30px; margin: 10px 20px;}
+        ul li a {text-decoration: none; color: #000;}
+        .container {margin-top:60px;}
+        div {height:200px; margin:60px 0; background:#ee5f5b;}
+    </style>
+    <script src="jquery.js"></script>
+    <script src="shakebarNavSpy.js"></script>
+    <script>
+        window.onload = function(){
+            var oUl = document.getElementsByTagName("ul")[0];
+
+            // 单页面模式 container DIV需要加上.section_shsh
+            new ShakeNav(oUl, {startAt: 3, mode:"single-page", offset:60});
+
+            // 非单页面模式，不提供滚动监测
+            // new ShakeNav(oUl, {startAt: 1});
+
+        };
+    </script>
+</head>
+<body>
+<ul>
+    <li><a href="javascript:;">首页</a></li>
+    <li><a href="javascript:;">我们</a></li>
+    <li><a href="javascript:;">新闻</a></li>
+    <li><a href="javascript:;">作品</a></li>
+    <li><a href="javascript:;">联系</a></li>
+    <li><a href="javascript:;">hehe</a></li>
+</ul>
+<div class="container section_shsh">
+    <div id="index">#首页</div>
+    <div id="us">#我们</div>
+    <div id="news">#新闻</div>
+    <div id="works">#作品</div>
+    <div id="contact">#联系</div>
+    <div id="hehe">hehe</div>
+</div>
+
+</body>
+</html>

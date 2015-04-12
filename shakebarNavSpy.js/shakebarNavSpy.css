@@ -1,0 +1,10 @@
+/* created by fengqi on 4/11/2015 */
+li.shakeBar{
+    position:absolute;
+    bottom:-4px;
+    left:0px;
+    overflow:hidden;
+    margin-left:0;
+    height:0;
+    border-bottom:3px solid #333;
+}
