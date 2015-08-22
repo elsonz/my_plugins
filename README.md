@@ -9,7 +9,7 @@ js plugins written by myself
   - `demo.html` shows the effect of `shakebarNavSpy.js`
   - ps. you can customize the "shakebar"'s appearance by editing `shakebarNavSpy.css`
 
-**2. RIA-component RIA扬帆任务组件 - 基于jquery
+**2. RIA-component RIA扬帆任务组件 - 基于jquery**
   - 瀑布流组件 Waterfall.js
   - 图片查看器组件 Slider.js
   - demo.html 为两个组件一起使用的示范案例
