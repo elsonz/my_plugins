@@ -1,30 +1,12 @@
 [
     {
-        "src": "http://www.atool.org/placeholder.png?size=240x201&text=广告广告广告&bg=9bce3b",
-        "bigPic": "http://www.atool.org/placeholder.png?size=740x601"
+        "src": "http://www.atool.org/placeholder.png?size=240x800&text=广告广告广告&bg=9bce3b",
+        "bigPic": "http://www.atool.org/placeholder.png?size=740x601",
+        "desc": "广告描述 百度健康"
     },
     {
-        "src": "http://www.atool.org/placeholder.png?size=240x202&text=广告广告广告&bg=9bce3b",
-        "bigPic": "http://www.atool.org/placeholder.png?size=740x602"
-    },
-    {
-        "src": "http://www.atool.org/placeholder.png?size=240x203&text=广告广告广告&bg=9bce3b",
-        "bigPic": "http://www.atool.org/placeholder.png?size=740x603"
-    },
-    {
-        "src": "http://www.atool.org/placeholder.png?size=240x240&text=广告广告广告&bg=9bce3b",
-        "bigPic": "http://www.atool.org/placeholder.png?size=740x656"
-    },
-    {
-        "src": "http://www.atool.org/placeholder.png?size=240x250&text=广告广告广告&bg=9bce3b",
-        "bigPic": "http://www.atool.org/placeholder.png?size=740x700"
-    },
-    {
-        "src": "http://www.atool.org/placeholder.png?size=240x260&text=广告广告广告&bg=9bce3b",
-        "bigPic": "http://www.atool.org/placeholder.png?size=740x322"
-    },
-    {
-        "src": "http://www.atool.org/placeholder.png?size=240x100&text=广告广告广告&bg=9bce3b",
-        "bigPic": "http://www.atool.org/placeholder.png?size=740x664"
+        "src": "http://www.atool.org/placeholder.png?size=240x300&text=广告广告广告&bg=9bce3b",
+        "bigPic": "http://www.atool.org/placeholder.png?size=740x602",
+        "desc": "广告描述 百度健康"
     }
 ]

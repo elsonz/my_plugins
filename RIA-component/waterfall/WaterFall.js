@@ -1,30 +1,41 @@
 /**
- * @file    瀑布流组件
- * @author  zhangfengqi zfengqi90@163.com
+ * @file    基于jquery的瀑布流组件
+ * @author  zhangfengqi(zfengqi90@163.com)
+ * @date    2015.08.22
  */
 
 /**
  * @constructor 构造函数
- * @param {HTMLElement|jQueryObjet} main 瀑布流主容器
- * @param {Object} options 配置参数
  *
+ * @param {HTMLElement|jQueryObjet} main 瀑布流主容器
+ * @param {string} url 异步加载url
+ * @param {Object} options 配置参数
+ * @param {string} options.birckItemClass 图片块的classname 默认为'brick'
+ * @param {number} options.margin 图片块间距 默认为10
+ * @param {number} options.minCols 显示的最小列数 默认为3
+ * @param {string} options.ajaxDataInterface ajax数据中的图片url接口 默认为'src'
+ * @param {Function} options.onRender 自定义数据块html模板函数 返回值为html模板字符串
  */
-function WaterFall(main, options) {
+function WaterFall(main, url, options) {
     var me = this;
     options = options || {};
 
     this.main = $(main);
-    this.mainWidth = this.main.get(0).offsetWidth;
     this.brickItemClass = options.brickItemClass || 'brick';
-    this.brickWidth = this.main.find('.' + this.brickItemClass).get(0).offsetWidth;
-    this.colHeights = [];
-    this.ajaxUrl = options.url;
-    this.ajaxDataOptions = options.ajaxDataOptions || {
-        imgSrc: "src"
-    };
+
+    this.margin = options.margin || 10;
+    this.brickWidth = +this.main.find('.' + this.brickItemClass).get(0).offsetWidth + this.margin;
+
+    this.colHeights = []; // 各列高度
+    this.ajaxUrl = url;
+    this.ajaxDataInterface = options.ajaxDataInterface || 'src';
+    this.minCols = options.minCols || 3;
+    this.onRender = options.onRender;
 
     $(window).on('scroll', function () {
-        me.loadData(me.ajaxUrl);
+        if (me.checkLoadCondition()) {
+            me.loadData(me.ajaxUrl);
+        }
     });
 
     $(window).on('resize', this.throttle(function () {
@@ -41,7 +52,7 @@ function WaterFall(main, options) {
 /**
  * 设置数据块的位置
  *
- * @param {boolean} hasAnimate 位置调整是否有动效
+ * @param {boolean} hasAnimate 位置调整时是否有动效
  */
 WaterFall.prototype.adjustPos = function (hasAnimate) {
     var me = this;
@@ -50,7 +61,12 @@ WaterFall.prototype.adjustPos = function (hasAnimate) {
     var minColIndex;
 
     if (brickItem) {
-        var cols = Math.floor(this.mainWidth / this.brickWidth);
+        var clientWidth = document.documentElement.clientWidth;
+        var cols = Math.floor((clientWidth + this.margin) / this.brickWidth);
+        cols = Math.max(cols, this.minCols);
+
+        var containerWidth = cols * this.brickWidth - this.margin;
+        this.main.closest('.container').css('width', containerWidth + 'px');
 
         brickItem.css('position', 'absolute');
 
@@ -61,7 +77,7 @@ WaterFall.prototype.adjustPos = function (hasAnimate) {
                     left: me.brickWidth * index
                 });
 
-                me.colHeights.push(item.offsetHeight);
+                me.colHeights.push(+item.offsetHeight + me.margin);
             }
             else {
                 // 找到最小高度 & 其所在的列索引值
@@ -105,7 +121,7 @@ WaterFall.prototype.setPos = function (item, hasAnimate) {
         });
     }
     // 更新每列高度值
-    this.colHeights[minColIndex] += item.offsetHeight;
+    this.colHeights[minColIndex] += item.offsetHeight + this.margin;
     // 调整容器高度
     this.main.css({
         height: Math.max.apply(null, this.colHeights)
@@ -114,6 +130,24 @@ WaterFall.prototype.setPos = function (item, hasAnimate) {
     return this;
 };
 
+/**
+ * 判断加载数据的条件
+ *
+ * @return {boolean} 是否满足条件
+ */
+WaterFall.prototype.checkLoadCondition = function () {
+    var me = this;
+    // 触发条件：最后一张图露出一半
+    var lastBrick = this.main.find('.' + this.brickItemClass).get(-1);
+    var lastBrickTop = lastBrick.offsetTop + 0.5 * lastBrick.offsetHeight;
+    var trigger = $(document).scrollTop() + document.documentElement.clientHeight;
+
+    if (lastBrick && lastBrickTop < trigger) {
+        return true;
+    }
+
+    return false;
+};
 
 /**
  * 加载数据
@@ -122,42 +156,32 @@ WaterFall.prototype.setPos = function (item, hasAnimate) {
  */
 WaterFall.prototype.loadData = function (url) {
     var me = this;
-    // 触发条件：最后一张图露出一半时
-    var lastBrick = this.main.find('.' + this.brickItemClass).get(-1);
-    var lastBrickTop = lastBrick.offsetTop + 0.5 * lastBrick.offsetHeight;
-    var trigger = $(document).scrollTop() + document.documentElement.clientHeight;
-    if (lastBrick && lastBrickTop < trigger) {
-        $.ajax(url, {
-            success: function (data) {
-                if (data.length > 0) {
 
-                    for (var i = 0; i < data.length; i++) {
-                        var src = data[i][me.ajaxDataOptions.imgSrc];
-                        var imgNum = data.length;
+    $.ajax(url, {
+        success: function (data) {
+            if (data.length > 0) {
 
-                        (function (index) {
-                            me.getImgSize(src, function (width, height) {
+                for (var i = 0; i < data.length; i++) {
+                    var src = data[i][me.ajaxDataInterface];
 
-                                me.render(data[index], imgNum, width, height);
-                            });
-
-                        })(i);
-                    }
-
-                    // me.render(data);
+                    (function (index) {
+                        me.getImgSize(src, function (width, height) {
+                            me.render(data[index], width, height);
+                        });
+                    })(i);
                 }
             }
-        });
-
-    }
-
+        }
+    });
 };
 
 /**
  * 获取加载图片的尺寸
  *
+ * @param {string} url 图片url
+ * @param {Function} loadedCb 图片加载完成后的回调函数
  */
-WaterFall.prototype.getImgSize = function (src, loadedCb) {
+WaterFall.prototype.getImgSize = function (url, loadedCb) {
     var imgLoader = new Image();
 
     imgLoader.onload = function () {
@@ -169,47 +193,39 @@ WaterFall.prototype.getImgSize = function (src, loadedCb) {
         imgLoader = imgLoader.onload = null;
     };
 
-    imgLoader.src = src;
+    imgLoader.src = url;
 };
 
 /**
  * 单个数据块DOM结构渲染
  *
- * @param {Object} dataItem ajax数据
+ * @param {Object} dataItem ajax数据对象
+ * @param {number} width    加载的图片宽度
+ * @param {number} height   加载的图片高度
  */
-WaterFall.prototype.render = function (dataItem, imgNum, width, height) {
+WaterFall.prototype.render = function (dataItem, width, height) {
     var me = this;
+    var src = dataItem[me.ajaxDataInterface];
 
     var renderer = this.onRender || function () {
-        var tpl = '';
-
-        tpl = ''
-        + '<li class="' + me.brickItemClass + '">'
-        +   '<a href="' + dataItem.bigPic + '">'
-        +       '<img src="' + dataItem.src + '" width="' + width + 'px" height="' + height + 'px" alt="">'
-        +   '</a>'
-        + '</li>';
+        var tpl = ''
+            + '<li class="' + me.brickItemClass + '">'
+            +   '<div class="pic">'
+            +     '<a href="' + dataItem.bigPic + '" title="'+ dataItem.desc +'">'
+            +       '<img src="' + src + '" height="' + height + 'px" alt="">'
+            +     '</a>'
+            +   '</div>'
+            + '</li>';
 
         return tpl;
     };
 
     this.main.append(renderer.call(this));
 
-    // 调整left和top值
-    // 避免从头开始设置
     var brickItem = this.main.find('.' + this.brickItemClass);
 
+    // 只为最新加载进来的图片设置top left
     me.setPos(brickItem.last().get(0));
-
-    // if (imgNum > 0) {
-    //     var startIndex = brickItem.length - imgNum;
-
-    //     for (var i = startIndex; i < brickItem.length; i++) {
-    //         // $(brickItem[i]).css('position', 'absolute');
-    //         me.setPos(brickItem[i]);
-    //     }
-    // }
-
 };
 
 /**
