@@ -67,8 +67,8 @@ function Slider(main, options) {
 
     $(window).on('resize', function () {
         $('#slider-overlay').css({
-            width: document.documentElement.scrollWidth,
-            height: document.documentElement.scrollHeight
+            width: document.documentElement.clientWidth,
+            height: document.documentElement.clientHeight
         }).fadeIn();
     });
 
@@ -143,8 +143,8 @@ Slider.prototype.setPopup = function () {
     $('#slider-overlay').css({
         backgroundColor: me.overlayBgColor,
         opacity: me.overlayOpacity,
-        width: document.documentElement.scrollWidth,
-        height: document.documentElement.scrollHeight
+        width: document.documentElement.clientWidth,
+        height: document.documentElement.clientHeight
     }).fadeIn();
 
 

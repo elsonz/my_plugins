@@ -32,6 +32,7 @@ function WaterFall(main, url, options) {
     this.minCols = options.minCols || 3;
     this.onRender = options.onRender;
 
+
     $(window).on('scroll', function () {
         if (me.checkLoadCondition()) {
             me.loadData(me.ajaxUrl);
@@ -47,6 +48,11 @@ function WaterFall(main, url, options) {
     }, 400, 800));
 
     this.adjustPos();
+
+    // 若首屏图片未满屏，则请求新的图片
+    if (me.checkLoadCondition()) {
+        me.loadData(me.ajaxUrl);
+    }
 }
 
 /**
